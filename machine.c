@@ -3,6 +3,7 @@
 #define TRANSITIONSARRAYSIZEMAX 50 // the max number of transitions in the machine definitions
 #define BOXSIZE 3  // one box of the array where there are the prev state, input, new state (size 3)
 #define TRANSITIONSLINESIZE 5 // in the file with transitions how big is one line
+#define INPUTSMAX 250
 
 int validateInput(char input);
 
@@ -12,11 +13,12 @@ int checkFormat(char semicolon, char greaterThan);
 
 void printTransitionsArray(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength);
 
+int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength);
+
 
 int
 main() {
     char input; // delete, dummy variable
-    char prevState = '0';
     int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE];
 
     // this is is the actual size of the populated part of the array with transitions,
@@ -30,27 +32,17 @@ main() {
     }
     printTransitionsArray(arrayTransitions, arrayLength);
 
-    return 0;
+    int inputSuccess = moveInTheMachine(arrayTransitions, arrayLength);
 
-    printf("Input a state: ");
-    scanf("%c", &input);
-
-    if (!validateInput(input))
-        return 0;            // after this point the input state is valid or the program is terminated
-
-
-    for (int i = 0;
-         i < TRANSITIONSARRAYSIZEMAX; i++) // this is the loop that checks the what the the transition going to be
-    {
-
-        if (arrayTransitions[i][0] == input && arrayTransitions[i][1] == prevState) {
-            prevState = arrayTransitions[i][2];
-            printf("%c", prevState);
-            break;
-        }
+    if (!inputSuccess) {
+        printf("Error occurred while attempting to move in the machine.\n");
+        return 0;
     }
-    return 1;
 }
+
+//    printf("Input a state: ");
+//    scanf("%c", &input);
+
 
 // check if the input is one of the available ones
 int
@@ -89,13 +81,10 @@ int readTransitions(int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE]) {
                        &greaterThan, &nextState);
 
     while ((line!=0) && (line != EOF) && i < TRANSITIONSARRAYSIZEMAX) {
-        printf("%d\n",i);
         if (!checkFormat(semicolon, greaterThan)){
             return 0;
         }
-        printf("%d%c%c%c%d\n", prevState, semicolon, input, greaterThan, nextState);
         // here we already know that the format, the inputs and states are valid
-        printf("%d\n", prevState);
         array[i][0] = prevState;
         array[i][1] = (int) input;
         array[i][2] = nextState;
@@ -130,5 +119,37 @@ void printTransitionsArray(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE
         printf("%c,", arrayTransitions[loop][1]);
         printf("%d\n", arrayTransitions[loop][2]);
 
+    }
+}
+
+int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength) {
+    char input;
+    char prevState = 0; // in the beginning we are always starting from the state 0
+    FILE *infile;
+    infile = fopen("/Users/elizabeth/CLionProjects/Learning_C11/inputs.txt", "r");
+    int i = 0;
+    int inputFound = 0;
+
+    if (infile == NULL) {
+        printf("FileOpeningError: unable to open file with the inputs.\n");
+        return 0;
+    }
+    while ((fscanf(infile, "%c\n", &input) != EOF) && (i < INPUTSMAX)) {
+        for (int i = 0; i < arrayLength; i++) // this is the loop that checks the what the the transition going to be
+        {
+
+            if (arrayTransitions[i][0] == prevState && ((char) arrayTransitions[i][1]) == input) {
+                prevState = arrayTransitions[i][2];
+                printf("%d\n", prevState);
+                inputFound = 1;
+                break;
+            }
+        }
+        i++;
+        if (!inputFound) {
+            printf("InvalidInputError: the input does not match to available inputs in machine definition.\n");
+            return 0;
+        }
+        inputFound = 0;
     }
 }
