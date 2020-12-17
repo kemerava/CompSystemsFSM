@@ -8,6 +8,8 @@ int readTransitions(int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE], char transition
 
 int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength, char inputFileName[]);
 
+void machineDefinition(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength);
+
 
 int
 main(int argc, char *argv[]) {
@@ -44,7 +46,7 @@ main(int argc, char *argv[]) {
         printf("error occurred while attempting to move in the machine\n");
         return 0;
     }
-
+    machineDefinition(arrayTransitions, arrayLength);
 }
 
 // this function is the one responsible for processing the transitions file,
@@ -161,12 +163,13 @@ int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int
     return i;
 }
 
-void printTransitionsArray(int (*arrayTransitions)[3], int arrayLength) {
+void machineDefinition(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength) {
+    printf("FSM has %d transitions\n", arrayLength);
     int loop;
     for (loop = 0; loop < arrayLength; loop++) {
-        printf("%d,", arrayTransitions[loop][0]);
-        printf("%c,", arrayTransitions[loop][1]);
-        printf("%d\n", arrayTransitions[loop][2]);
+        printf("transition %d: state %d with input %c goes to state %d\n", loop, arrayTransitions[loop][0],
+               arrayTransitions[loop][1], arrayTransitions[loop][2]);
 
     }
 }
+
