@@ -4,11 +4,7 @@
 #define BOXSIZE 3  // one box of the array where there are the prev state, input, new state (size 3)
 #define INPUTSMAX 250 // the maximum number of inputs that are in the input file
 
-int validateInput(char input);
-
 int readTransitions(int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE], char transitionsFileName[]);
-
-void printTransitionsArray(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength);
 
 int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength, char inputFileName[]);
 
@@ -16,7 +12,7 @@ int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int
 int
 main(int argc, char *argv[]) {
     if (argc!=3 && argc!=4){
-        printf("InsufficientNumberOfArgumentsError: the number of arguments provided is not correct.\n");
+        printf("InsufficientNumberOfArgumentsError: the number of arguments provided is not correct\n");
         return 0;
     }
     // strings with the argument names from the commandline
@@ -36,17 +32,16 @@ main(int argc, char *argv[]) {
     // this will be outputted for any error that occurred while reading transitions file
     // some errors (for example the file not opening) will have additional errors printed before that
     if (!arrayLength) {
-        printf("Error occurred while attempting to read the machine definition.\n");
+        printf("error occurred while attempting to read the machine definition\n");
         return 0;
     }
-//    printTransitionsArray(arrayTransitions, arrayLength);
 
     // go through the inputs and the states of the machines according to the machine definition
     int inputSuccess = moveInTheMachine(arrayTransitions, arrayLength, inputFileName);
 
     // if error occurred while reading from the file and input transitions, print this error
     if (!inputSuccess) {
-        printf("Error occurred while attempting to move in the machine.\n");
+        printf("error occurred while attempting to move in the machine\n");
         return 0;
     }
 
@@ -66,7 +61,7 @@ int readTransitions(int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE], char transition
 
     // exit with the 0 error code if the error occurred while opening file
     if (infile == NULL) {
-        printf("FileOpeningError: unable to open file with the machine definition.\n");
+        printf("FileOpenError: unable to open file with the machine definition\n");
         return 0;
     }
     printf("processing FSM definition file %s\n", transitionsFileName);
@@ -125,7 +120,7 @@ int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int
 
     // if the error occurred while opening the file, print the error, exit with the 0 code
     if (infile == NULL) {
-        printf("FileOpeningError: unable to open file with the inputs.\n");
+        printf("FileOpenError: unable to open file with the inputs\n");
         return 0;
     }
 
@@ -152,7 +147,7 @@ int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int
         i++;
         // exist if the edge wasn't found
         if (!inputFound) {
-            printf("InvalidInputError: the input does not match to available inputs in machine definition.\n");
+            printf("InvalidInputError: the input does not match to available inputs in machine definition\n");
             fclose(infile);
             return 0;
         }
@@ -162,13 +157,11 @@ int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int
     // close the file
     fclose(infile);
 
-    printf("after %d steps, state machine finished successfully at state %d", i, state);
+    printf("after %d steps, state machine finished successfully at state %d\n", i, state);
     return i;
 }
 
-
-// util function for printing the machine definition's array
-void printTransitionsArray(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength){
+void printTransitionsArray(int (*arrayTransitions)[3], int arrayLength) {
     int loop;
     for (loop = 0; loop < arrayLength; loop++) {
         printf("%d,", arrayTransitions[loop][0]);
@@ -177,19 +170,3 @@ void printTransitionsArray(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE
 
     }
 }
-
-// check if the input is one of the available ones
-//int
-//validateInput(char input) {
-//    if (input != 'a' && input != 'b' && input != 'c' &&
-//        input != 'd')    // check if the state is one of the 4 valid ones
-//    {
-//        printf("IncorrectInputError: the input %c is not valid.\n", input);    // if not print the error message
-//        return 0;
-//    }
-//    return 1;
-//}
-
-
-
-
