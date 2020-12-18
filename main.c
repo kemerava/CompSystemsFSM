@@ -6,20 +6,35 @@
 
 int readTransitions(int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE], char transitionsFileName[]);
 
-int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength, char inputFileName[]);
+int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength, char inputFileName[], int debug);
 
 void machineDefinition(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength);
 
 
 int
 main(int argc, char *argv[]) {
-    if (argc!=3 && argc!=4){
+    char *transitionsFileName;
+    char *inputFileName;
+    int debug = 0;
+    if (argc==3){
+        // strings with the argument names from the commandline
+        transitionsFileName = argv[1];
+        inputFileName = argv[2];
+    }
+    else if (argc==4){
+        if (argv[1][0]!='-' || argv[1][1]!='d'){
+            printf("InvalidArgumentError: the entered argument is invalid. Enter '-d' to enter debugger");
+            return 0;
+        }
+        debug = 1;
+        // strings with the argument names from the commandline
+        transitionsFileName = argv[2];
+        inputFileName = argv[3];
+    }
+    else{
         printf("InsufficientNumberOfArgumentsError: the number of arguments provided is not correct\n");
         return 0;
     }
-    // strings with the argument names from the commandline
-    char *transitionsFileName = argv[1];
-    char *inputFileName = argv[2];
 
     // create the array that is going to be holding the machine definitions
     // the dimensions are originally the number of rows is not exceeding 50
@@ -39,14 +54,14 @@ main(int argc, char *argv[]) {
     }
 
     // go through the inputs and the states of the machines according to the machine definition
-    int inputSuccess = moveInTheMachine(arrayTransitions, arrayLength, inputFileName);
+    int inputSuccess = moveInTheMachine(arrayTransitions, arrayLength, inputFileName, debug);
 
     // if error occurred while reading from the file and input transitions, print this error
     if (!inputSuccess) {
         printf("error occurred while attempting to move in the machine\n");
         return 0;
     }
-    machineDefinition(arrayTransitions, arrayLength);
+
 }
 
 // this function is the one responsible for processing the transitions file,
@@ -106,7 +121,7 @@ int readTransitions(int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE], char transition
 // this function is printing out the steps that are taken inside the machine
 // while reading the inputs form the file,
 // it is printing out what is inside this file
-int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength, char inputFileName[]) {
+int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength, char inputFileName[], int debug) {
     char input;
     // in the beginning we are always starting from the state 0
     char state = 0;
@@ -129,6 +144,26 @@ int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int
     printf("processing FSM inputs file %s\n", inputFileName);
     // read one char at a time
     while ((fscanf(infile, "%c\n", &input) != EOF) && (i < INPUTSMAX)) {
+        // enter the debugger if was started with the '-d' option 
+        if (debug){
+            // get the debugger command from the user 
+            char debugOption;
+            printf("FSM debugger>");
+            scanf(" %c", &debugOption);
+            // only go to looking for the transition and printing it if command 'n' was inputted 
+            while (debugOption!='n'){
+                // if p was inputted print out the current machine state and continue prompting until 'n' would be inputted
+                if (debugOption=='p'){
+                    machineDefinition(arrayTransitions, arrayLength);
+                }
+                // if not 'n' or 'p' print error anc continue prompting for command 
+                else {
+                printf("InvalidDebuggerCommandError: command not found. Please, type 'p' to print current state or 'n' to move further\n" );
+                }
+                printf("FSM debugger> ");
+                scanf(" %c", &debugOption);
+            }
+        }
         // this is the loop that checks the what the the transition going to be
         // if we were not able to find the transition that means that either the input does not exist in machine
         // or there is no edge that goes from the current state with this input
@@ -163,13 +198,18 @@ int moveInTheMachine(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int
     return i;
 }
 
+// debugger helper function, which is printing the current state of the machine
 void machineDefinition(int arrayTransitions[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLength) {
+    // print the number of the transition in the machine definition
     printf("FSM has %d transitions\n", arrayLength);
     int loop;
+    // go though the machine and print out the transitions
     for (loop = 0; loop < arrayLength; loop++) {
         printf("transition %d: state %d with input %c goes to state %d\n", loop, arrayTransitions[loop][0],
                arrayTransitions[loop][1], arrayTransitions[loop][2]);
 
     }
 }
+
+
 
