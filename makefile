@@ -2,9 +2,12 @@ all: main_compile main
 
 clean:
 	rm ./main
+	rm main.o
+	rm tests.o
+	rm utils.o
 
 main_compile:
-	gcc -g -o main main.c
+	gcc -g -o main main.c utils.c tests.c
 	@echo "Finished compiling main"
 	@echo "---------------------------------\n"
 
