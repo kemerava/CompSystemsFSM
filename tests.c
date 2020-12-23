@@ -167,7 +167,7 @@ void test_debugger() {
 
 int test_empty_definition_file(){
     int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE];
-    char fileName[] = "/Users/elizabeth/CLionProjects/FSM/transitions_empty.txt";
+    char fileName[] = "./transitions_empty.txt";
     FILE *infile;
     infile = fopen(fileName, "r");
     if (populateMachineArray(infile, array)){
@@ -181,7 +181,7 @@ int test_empty_definition_file(){
 
 int test_empty_inputs_file(){
     int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE];
-    char fileName[] = "/Users/elizabeth/CLionProjects/FSM/inputs_empty.txt";
+    char fileName[] = "./inputs_empty.txt";
     FILE *infile;
     infile = fopen(fileName, "r");
     int arrayLength = TRANSITIONSARRAYSIZEMAX;
@@ -195,7 +195,7 @@ int test_empty_inputs_file(){
 
 int test_invalid_transition(){
     int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE];
-    char fileName[] = "/Users/elizabeth/CLionProjects/FSM/invalid_inputs.txt";
+    char fileName[] = "./invalid_inputs.txt";
     FILE *infile;
     infile = fopen(fileName, "r");
     if (populateMachineArray(infile, array)){
@@ -208,7 +208,7 @@ int test_invalid_transition(){
 
 int test_valid_transitions(){
     int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE];
-    char fileName[] = "/Users/elizabeth/CLionProjects/FSM/transitions.txt";
+    char fileName[] = "./transitions.txt";
     FILE *infile;
     infile = fopen(fileName, "r");
     int array_needed[TRANSITIONSARRAYSIZEMAX][BOXSIZE] = {{0, 'a', 1}, {0, 'b', 1}, {0,'c',2},
@@ -227,11 +227,11 @@ int test_valid_transitions(){
 
 int test_more_than_50_transitions(){
     int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE];
-    char fileName[] = "/Users/elizabeth/CLionProjects/FSM/transitions_over_50.txt";
+    char fileName[] = "./transitions_over_50.txt";
     FILE *infile;
     infile = fopen(fileName, "r");
 
-    if (populateMachineArray(infile, array) != 50){
+    if (populateMachineArray(infile, array) != TRANSITIONSARRAYSIZEMAX){
         printf("Test for valid transition for populateMachineArray() failed!\n");
         return 0;
     }
@@ -245,7 +245,7 @@ int test_valid_inputs(){
         {0,'d',3}, {1,'a',0}, {1,'b',2}, {1,'c',2},
         {1,'d',3}, {2,'a',0}, {2,'b',1}, {2,'c',2},
         {2,'d',3}, {3,'a',0}, {3,'b',1}, {3,'c',0}, {3,'d',0}};
-    char fileName[] = "/Users/elizabeth/CLionProjects/FSM/inputs.txt";
+    char fileName[] = "./inputs.txt";
     FILE *infile;
     infile = fopen(fileName, "r");
     int arrayLength = 16;
@@ -262,11 +262,11 @@ int test_more_than_250_inputs(){
                                                    {0,'d',3}, {1,'a',0}, {1,'b',2}, {1,'c',2},
                                                    {1,'d',3}, {2,'a',0}, {2,'b',1}, {2,'c',2},
                                                    {2,'d',3}, {3,'a',0}, {3,'b',1}, {3,'c',0}, {3,'d',0}};
-    char fileName[] = "/Users/elizabeth/CLionProjects/FSM/inputs_over_250.txt";
+    char fileName[] = "./inputs_over_250.txt";
     FILE *infile;
     infile = fopen(fileName, "r");
     int arrayLength = 16;
-    if (mapInputs(infile, 0, array, arrayLength)!= 250){
+    if (mapInputs(infile, 0, array, arrayLength)!= INPUTSMAX){
         printf("Test for more than 250 inputs for mapInputs() failed!\n");
         return 0;
     }
