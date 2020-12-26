@@ -25,4 +25,6 @@ int parseArgs(int argc, char *argv[], char *transitionsFileName[], char *inputFi
 
 int validateInput(char input);
 
+int addEdgeIfUnique(int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int prevState, char input, int nextState, int i);
+
 #endif //FSM_UTILS_H
