@@ -23,8 +23,10 @@ int test_invalid_number_args();
 int test_invalid_debug_arg();
 int test_not_letter_input();
 int test_valid_args();
-
 int test_letter_input();
+int test_add_unique_edge();
+int test_add_same_edge_diff_next_state();
+int test_add_same_edge_same_next_state();
 
 
 
@@ -33,7 +35,6 @@ int compare_arrays(int array1[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLen1, 
 int tests(){
     /*
      *  tests:
-
         createMachine();
             1. check for the invalid input file
         moveInTheMachine();
@@ -61,9 +62,13 @@ int tests(){
             17. input invalid number of arguments
             18. input invalid debug argument
             19. input valid and check what are the values of the parameters
-        validateInput(char input);
+        validateInput();
             20. input the invalid input
             21. input a valid input
+        addEdgeIfUnique():
+            22. add unique edge
+            23. add same edge with different next state
+            24. add same edge with same next state
      */
 
     int count = 0;
@@ -119,10 +124,19 @@ int tests(){
     count += test_not_letter_input();
 
     // test 21
-    count += test_valid_args();
+    count += test_letter_input();
+
+    // test 22
+    count += test_add_unique_edge();
+
+    // test 23
+    count += test_add_same_edge_diff_next_state();
+
+    // test 24
+    count += test_add_same_edge_same_next_state();
 
     printf("----------------------------------------------\n");
-    printf("Tests finished. %d tests succeeded out of 17\n", count);
+    printf("Tests finished. %d tests succeeded out of 20\n", count);
     printf("----------------------------------------------\n");
 
     return count;
@@ -395,9 +409,57 @@ int test_letter_input() {
 
 }
 
-// ---------
-// util function that is comparing elements of the array
+int test_add_unique_edge(){
+    int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE] = {{0, 'a', 1}, {0, 'b', 1}, {0,'c',2},
+                                                   {0,'d',3}, {1,'a',0}, {1,'b',2}, {1,'c',2},
+                                                   {1,'d',3}, {2,'a',0}, {2,'b',1}, {2,'c',2},
+                                                   {2,'d',3}, {3,'a',0}, {3,'b',1}, {3,'c',0}, {3,'d',0}};
+    int prevState = 4;
+    char input = 'n';
+    int nextState = 5;
+    int i = 16;
+    int expected = i + 1;
+    if (addEdgeIfUnique(array, prevState, input, nextState, i) != expected){
+        printf("Test for adding unique edge for addEdgeIfUnique() failed!\n");
+        return 0;
+    }
+    return 1;
+}
 
+int test_add_same_edge_diff_next_state(){
+    int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE] = {{0, 'a', 1}, {0, 'b', 1}, {0,'c',2},
+                                                   {0,'d',3}, {1,'a',0}, {1,'b',2}, {1,'c',2},
+                                                   {1,'d',3}, {2,'a',0}, {2,'b',1}, {2,'c',2},
+                                                   {2,'d',3}, {3,'a',0}, {3,'b',1}, {3,'c',0}, {3,'d',0}};
+    int prevState = 2;
+    char input = 'a';
+    int nextState = 1;
+    int i = 16;
+    if (addEdgeIfUnique(array, prevState, input, nextState, i)){
+        printf("Test for adding same edge with different next state for addEdgeIfUnique() failed!\n");
+        return 0;
+    }
+    return 1;
+}
+
+int test_add_same_edge_same_next_state(){
+    int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE] = {{0, 'a', 1}, {0, 'b', 1}, {0,'c',2},
+                                                   {0,'d',3}, {1,'a',0}, {1,'b',2}, {1,'c',2},
+                                                   {1,'d',3}, {2,'a',0}, {2,'b',1}, {2,'c',2},
+                                                   {2,'d',3}, {3,'a',0}, {3,'b',1}, {3,'c',0}, {3,'d',0}};
+    int prevState = 2;
+    char input = 'a';
+    int nextState = 0;
+    int i = 16;
+    if (addEdgeIfUnique(array, prevState, input, nextState, i)!=i){
+        printf("Test for adding same edge with different next state for addEdgeIfUnique() failed!\n");
+        return 0;
+    }
+    return 1;
+}
+
+
+// util function that is comparing elements of the array
 int compare_arrays(int array1[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLen1, int array2[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int arrayLen2){
     if (arrayLen1 != arrayLen2){
         return 0;
