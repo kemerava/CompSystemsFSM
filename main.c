@@ -1,18 +1,19 @@
 
-
 #include <stdio.h>
 #include "utils.h"
+#include "tests.h"
 
 #define TRANSITIONSARRAYSIZEMAX 50 // the max number of transitions in the machine definitions
 #define BOXSIZE 3  // one box of the array where there are the prev state, input, new state (size 3)
 #define INPUTSMAX 250 // the maximum number of inputs that are in the input file
 
-int tests();
-int test_file_names();
-
-
 int
 main(int argc, char *argv[]) {
+    if (!tests()){
+        printf("TestsFailedError: some tests failed, please, refer specific tests outputs for details\n");
+        return 0;
+    }
+
     char *transitionsFileName;
     char *inputFileName;
     int debug = 0;
@@ -49,7 +50,5 @@ main(int argc, char *argv[]) {
         printf("error occurred while attempting to move in the machine\n");
         return 0;
     }
-//    tests(); // uncomment to run the tests 
 
 }
-
