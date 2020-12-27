@@ -94,10 +94,14 @@ int populateMachineArray(FILE *infile, int array[TRANSITIONSARRAYSIZEMAX][BOXSIZ
     int prevState;
     char input;
     int nextState;
-    int line = fscanf(infile, "%d:%c>%d\n", &prevState,  &input,
-                      &nextState);;
+    int line = fscanf(infile, "%d:%c>%d\n", &prevState,  &input, &nextState);;
 
-    while ((line != EOF) && i < TRANSITIONSARRAYSIZEMAX){
+    while ((line != EOF) ){
+        // if we reached the maximum amount of transitions, notify the user and omit the rest of file
+        if (i >= TRANSITIONSARRAYSIZEMAX){
+           printf("maximum allowed transitions limit reached, the rest of edges will be omitted\n");
+           break;
+        }
         // if the error occurred while retrieving the line, for example, if the format wasn't valid,
         // close the file and exit with the error code 0
         if (!line || !validateInput(input)){
@@ -105,23 +109,20 @@ int populateMachineArray(FILE *infile, int array[TRANSITIONSARRAYSIZEMAX][BOXSIZ
             fclose(infile);
             return 0;
         }
-
         // here we already know here that the format, the inputs and states are valid
-        // store the state, int value of the input and the next state in the single row of the machine definition array
-        array[i][0] = prevState;
-        array[i][1] = (int) input;
-        array[i][2] = nextState;
+        // check if the edge is unique, save and increment the count
+        i = addEdgeIfUnique(array, prevState, input, nextState, i);
+        // error message handled inside the function
+        if (!i){
+            return 0;
+        }
 
         // the "line" variable is the indicator of if the operation finished successfully,
         // one of the reasons for this operation to fail is if the %d didn't return the number,
         // or that it did not follow the format “state:input>next state”
-        line = fscanf(infile, "%d:%c>%d\n", &prevState,  &input,
-                      &nextState);
+        line = fscanf(infile, "%d:%c>%d\n", &prevState,  &input, &nextState);
         // increment the counter of times we were in the loop
-        i++;
-
-    };
-
+    }
     return i;
 }
 
@@ -133,7 +134,12 @@ int mapInputs(FILE *infile, int debug, int arrayTransitions[TRANSITIONSARRAYSIZE
     int i = 0;
 
     // read one char at a time
-    while ((fscanf(infile, "%c\n", &input) != EOF) && (i < INPUTSMAX)) {
+    while (fscanf(infile, "%c\n", &input) != EOF) {
+        // if we reached the maximum amount of transitions, notify the user and omit the rest of file
+        if (i >= INPUTSMAX){
+            printf("maximum allowed inputs limit reached, the rest of inputs will be omitted\n");
+            break;
+        }
         // enter the debugger if was started with the '-d' option
         if (debug){
             debugger(arrayTransitions, arrayLength);
@@ -199,4 +205,33 @@ int parseArgs(int argc, char *argv[], char **transitionsFileName, char **inputFi
 // checks if the input is the upper or lowercase letter, that is the allowed input
 int validateInput(char input){
     return ((input >= 'a') && (input<= 'z')) || ((input >='A') && (input<= 'Z'));
+}
+
+// function that checks if the array of transitions already contains that edge
+// if it does and the state is different -> error
+// if the state is the same -> ignore that transition
+// else add to the array
+int addEdgeIfUnique(int array[TRANSITIONSARRAYSIZEMAX][BOXSIZE], int prevState, char input, int nextState, int i){
+    int count = 0;
+    while (count<i){
+        // if this edge is already in the array
+        if ((array[count][0] == prevState) && (char) array[count][1] == input){
+            // if it leads to a different next state, that is the error, so return 0
+            if (array[count][2] != nextState){
+                printf("NondeterministicMachineError: the machine already contains the edge (%d, %c) with a different outcome %d\n",
+                       array[count][0], array[count][1], array[count][2]);
+                return 0;
+            }
+            // if it leads to the same next state, then just omit it (don't increment i)
+            else{
+                return i;
+            }
+        }
+        count++;
+    }
+    array[i][0] = prevState;
+    array[i][1] = (int) input;
+    array[i][2] = nextState;
+    i++;
+    return i;
 }
