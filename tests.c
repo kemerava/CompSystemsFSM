@@ -139,7 +139,10 @@ int tests(){
     printf("Tests finished. %d tests succeeded out of 20\n", count);
     printf("----------------------------------------------\n");
 
-    return count;
+    if (count != 20){
+        return 0;
+    }
+    return 1;
 
 }
 
