@@ -50,5 +50,4 @@ main(int argc, char *argv[]) {
         printf("error occurred while attempting to move in the machine\n");
         return 0;
     }
-    return 1;
 }
