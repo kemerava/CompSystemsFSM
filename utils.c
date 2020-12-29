@@ -106,7 +106,7 @@ int populateMachineArray(FILE *infile, int array[TRANSITIONSARRAYSIZEMAX][BOXSIZ
         // close the file and exit with the error code 0
         if (!line || !validateInput(input)){
             printf("LineFormatError: line in the transitions file contains errors or has an incorrect format\n");
-            fclose(infile);
+
             return 0;
         }
         // here we already know here that the format, the inputs and states are valid
@@ -150,7 +150,6 @@ int mapInputs(FILE *infile, int debug, int arrayTransitions[TRANSITIONSARRAYSIZE
         // so we are not explicitly checking for it
         if (!lookForEdge(arrayTransitions, arrayLength, statePointer, input, i)) {
             printf("InvalidInputError: the input does not match to available inputs in machine definition\n");
-            fclose(infile);
             return 0;
         }
         i++;
